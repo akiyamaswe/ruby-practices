@@ -4,8 +4,10 @@ files = Dir.glob('*').sort
 COL_COUNT = 3
 LIST_WIDTH = 20
 
-def sort_output(files, col_count)
-  output = add_nils(files, col_count).each_slice(@row_count).to_a.transpose
+def output_in_col_format(files, col_count)
+  fill_to_multiple_with_nil(files, col_count)
+  row_count = files.size / col_count
+  output = files.each_slice(row_count).to_a.transpose
   output.each do |inner_array|
     inner_array.each do |element|
       print element.to_s.ljust(LIST_WIDTH)
@@ -14,21 +16,11 @@ def sort_output(files, col_count)
   end
 end
 
-def add_nils(files, col_count)
+def fill_to_multiple_with_nil(files, col_count)
   surplus = files.size % col_count
-  cal_surplus_nils(col_count, surplus)
-  dup_files(files)
-  @number_of_nils.times { @add_nils_arrays << nil }
-  @row_count = @add_nils_arrays.size / col_count
-  @add_nils_arrays
+  number_of_nils = surplus.zero? ? 0 : col_count - surplus
+  number_of_nils.times { files << nil }
+  files
 end
 
-def cal_surplus_nils(col_count, surplus)
-  @number_of_nils = surplus.zero? ? 0 : col_count - surplus
-end
-
-def dup_files(files)
-  @add_nils_arrays = files.dup
-end
-
-sort_output(files, COL_COUNT)
+output_in_col_format(files, COL_COUNT)
