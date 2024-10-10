@@ -14,7 +14,8 @@ def parse_options
 end
 
 def get_files(options)
-  options[:all_files] ? Dir.glob('*', File::FNM_DOTMATCH) : Dir.glob('*')
+  list_hidden_files = options[:all_files] ? File::FNM_DOTMATCH : 0
+  Dir.glob('*', list_hidden_files)
 end
 
 def output_in_col_format(files, col_count)
