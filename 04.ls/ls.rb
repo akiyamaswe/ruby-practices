@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
-files = Dir.glob('*').sort
+require 'optparse'
+
 COL_COUNT = 3
 LIST_WIDTH = 20
+
+def parse_options
+  options = { all_files: false }
+  opt = OptionParser.new
+  opt.on('-a') { options[:all_files] = true }
+  opt.parse!(ARGV)
+  options
+end
+
+def get_files(options)
+  list_hidden_files = options[:all_files] ? File::FNM_DOTMATCH : 0
+  Dir.glob('*', list_hidden_files)
+end
 
 def output_in_col_format(files, col_count)
   arrays_added_nils = files.dup
@@ -23,4 +37,5 @@ def fill_to_multiple_with_nil!(files, col_count, arrays_added_nils)
   number_of_nils.times { arrays_added_nils << nil }
 end
 
+files = get_files(parse_options)
 output_in_col_format(files, COL_COUNT)
