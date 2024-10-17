@@ -6,16 +6,18 @@ COL_COUNT = 3
 LIST_WIDTH = 20
 
 def parse_options
-  options = { all_files: false }
+  options = { all_files: false, reverse_files: false }
   opt = OptionParser.new
   opt.on('-a') { options[:all_files] = true }
+  opt.on('-r') { options[:reverse_files] = true }
   opt.parse!(ARGV)
   options
 end
 
 def get_files(options)
   list_hidden_files = options[:all_files] ? File::FNM_DOTMATCH : 0
-  Dir.glob('*', list_hidden_files)
+  file_deta = Dir.glob('*', list_hidden_files)
+  file_deta.map(&:to_s).sort.reverse if options[:reverse_files]
 end
 
 def output_in_col_format(files, col_count)
