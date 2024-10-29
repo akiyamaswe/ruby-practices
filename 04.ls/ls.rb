@@ -99,4 +99,3 @@ end
 options = parse_options
 files = get_files(options)
 options[:detailed_long_format] ? output_in_long_format(files) : output_in_col_format(files, COL_COUNT)
-
