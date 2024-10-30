@@ -5,6 +5,8 @@ require 'etc'
 
 COL_COUNT = 3
 LIST_WIDTH = 20
+LINUX_BYTES_PER_BLOCK = 512
+DISPLAY_BYTES_PER_BLOCK = 1024
 PERMISSIONS = {
   7 => 'rwx',
   6 => 'rw-',
@@ -26,7 +28,7 @@ def parse_options
   options
 end
 
-def get_files(options)
+def fetch_files(options)
   list_hidden_files = options[:all_files] ? File::FNM_DOTMATCH : 0
   file_deta = Dir.glob('*', list_hidden_files)
   file_deta.reverse! if options[:reverse_files]
@@ -52,19 +54,30 @@ def fill_to_multiple_with_nil!(files, col_count, arrays_added_nils)
   number_of_nils.times { arrays_added_nils << nil }
 end
 
-def get_file_details(file)
+def output_in_long_format(files)
+  puts calculate_total_blocks(files)
+  files.each { |file| puts file_details(file) }
+end
+
+def calculate_total_blocks(files)
+  total_blocks = files.reduce(0) { |sum, file| sum + File::Stat.new(file).blocks }
+  total_fixed_blocks = (total_blocks * LINUX_BYTES_PER_BLOCK) / DISPLAY_BYTES_PER_BLOCK
+  "total #{total_fixed_blocks}"
+end
+
+def file_details(file)
   stat = File.stat(file)
-  ftype = get_file_type(stat)
-  permissions = get_file_permissions(stat)
+  ftype = file_type(stat)
+  permissions = file_permissions(stat)
   nlink = stat.nlink
-  owner = get_file_owner(stat)
-  group = get_file_group(stat)
-  size = get_file_size(stat)
-  mtime = get_file_mtime(stat)
+  owner = file_owner(stat)
+  group = file_group(stat)
+  size = file_size(stat)
+  mtime = file_mtime(stat)
   "#{ftype}#{permissions} #{nlink} #{owner} #{group} #{size} #{mtime} #{file}"
 end
 
-def get_file_type(stat)
+def file_type(stat)
   case stat.ftype
   when 'directory' then 'd'
   when 'file' then '-'
@@ -72,30 +85,26 @@ def get_file_type(stat)
   end
 end
 
-def get_file_permissions(stat)
+def file_permissions(stat)
   format('%o', stat.mode)[-3, 3].chars.map { |ch| PERMISSIONS[ch.to_i] }.join
 end
 
-def get_file_owner(stat)
+def file_owner(stat)
   Etc.getpwuid(stat.uid).name
 end
 
-def get_file_group(stat)
+def file_group(stat)
   Etc.getgrgid(stat.gid).name.to_s.rjust(6, ' ')
 end
 
-def get_file_size(stat)
+def file_size(stat)
   stat.size.to_s.rjust(4, ' ')
 end
 
-def get_file_mtime(stat)
+def file_mtime(stat)
   stat.mtime.strftime('%b %e %H:%M')
 end
 
-def output_in_long_format(files)
-  files.each { |file| puts get_file_details(file) }
-end
-
 options = parse_options
-files = get_files(options)
+files = fetch_files(options)
 options[:detailed_long_format] ? output_in_long_format(files) : output_in_col_format(files, COL_COUNT)
