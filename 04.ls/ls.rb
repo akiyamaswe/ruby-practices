@@ -60,7 +60,7 @@ def output_in_long_format(files)
 end
 
 def calculate_total_blocks(files)
-  total_blocks = files.reduce(0) { |sum, file| sum + File::Stat.new(file).blocks }
+  total_blocks = files.sum { |file| File::Stat.new(file).blocks }
   total_fixed_blocks = (total_blocks * LINUX_BYTES_PER_BLOCK) / DISPLAY_BYTES_PER_BLOCK
   "total #{total_fixed_blocks}"
 end
