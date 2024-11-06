@@ -19,13 +19,8 @@ PERMISSIONS = {
 }.freeze
 
 def parse_options
-  options = { all_files: false, reverse_files: false, detailed_long_format: false }
-  opt = OptionParser.new
-  opt.on('-a') { options[:all_files] = true }
-  opt.on('-r') { options[:reverse_files] = true }
-  opt.on('-l') { options[:detailed_long_format] = true }
-  opt.parse!(ARGV)
-  options
+  options = ARGV.getopts('arl')
+  { all_files: options['a'], reverse_files: options['r'], detailed_long_format: options['l'] }
 end
 
 def fetch_files(options)
