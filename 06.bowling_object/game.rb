@@ -17,7 +17,7 @@ class Game
   def calculate_total_score
     total = 0
     @frames.each_with_index do |frame, index|
-      total += frame.frame_score
+      total += frame.base_frame_score
       total += frame.bonus_score(@frames[index + NEXT_FRAME_START..NEXT_FRAME_END])
     end
     total

@@ -13,7 +13,7 @@ class Frame
     @third_shot = Shot.new(third_mark)
   end
 
-  def frame_score
+  def base_frame_score
     @first_shot.score + @second_shot.score + @third_shot.score
   end
 
