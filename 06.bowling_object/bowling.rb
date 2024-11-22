@@ -3,6 +3,6 @@
 
 require_relative 'game'
 
-shots = ARGV.first.split(',')
-game_score = Game.new(shots)
+mark = ARGV.first.split(',')
+game_score = Game.new(mark)
 puts game_score.calculate_total_score
