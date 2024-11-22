@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'shot'
 require_relative 'frame'
 
 class Game
@@ -25,7 +26,10 @@ class Game
   private
 
   def process_shots(shots)
-    @frames << (shots[0] == 'X' ? Frame.new(shots.shift) : Frame.new(*shots.shift(NORMAL_FRAME_SHOTS))) while shots.size > LAST_FRAME_MAX_SHOTS
+    while shots.size > LAST_FRAME_MAX_SHOTS
+      first_shot = Shot.new(shots.first)
+      @frames << (first_shot.strike_mark? ? Frame.new(shots.shift) : Frame.new(*shots.shift(NORMAL_FRAME_SHOTS)))
+    end
     @frames << Frame.new(*shots.shift(LAST_FRAME_MAX_SHOTS))
   end
 end
