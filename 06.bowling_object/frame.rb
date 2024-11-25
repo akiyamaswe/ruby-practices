@@ -7,10 +7,10 @@ class Frame
 
   TOTAL_PINS = 10
 
-  def initialize(first_mark, second_mark = nil, third_mark = nil)
-    @first_shot = Shot.new(first_mark)
-    @second_shot = Shot.new(second_mark)
-    @third_shot = Shot.new(third_mark)
+  def initialize(first_shot, second_shot = nil, third_shot = nil)
+    @first_shot = first_shot
+    @second_shot = second_shot || Shot.new(nil)
+    @third_shot = third_shot || Shot.new(nil)
   end
 
   def base_frame_score

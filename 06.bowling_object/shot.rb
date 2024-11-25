@@ -7,6 +7,7 @@ class Shot
 
   def score
     return 10 if strike_mark?
+    return 0 if @mark.nil?
 
     @mark.to_i
   end

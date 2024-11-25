@@ -9,9 +9,10 @@ class Game
   NEXT_FRAME_START = 1
   NEXT_FRAME_END = -1
 
-  def initialize(shots)
+  def initialize(marks)
     @frames = []
-    process_shots(shots)
+    @shots = marks.map { |mark| Shot.new(mark) }
+    process_frames
   end
 
   def calculate_total_score
@@ -25,11 +26,8 @@ class Game
 
   private
 
-  def process_shots(shots)
-    while shots.size > LAST_FRAME_MAX_SHOTS
-      first_shot = Shot.new(shots.first)
-      @frames << (first_shot.strike_mark? ? Frame.new(shots.shift) : Frame.new(*shots.shift(NORMAL_FRAME_SHOTS)))
-    end
-    @frames << Frame.new(*shots.shift(LAST_FRAME_MAX_SHOTS))
+  def process_frames
+    @frames << (@shots.first.strike_mark? ? Frame.new(@shots.shift) : Frame.new(*@shots.shift(NORMAL_FRAME_SHOTS))) while @shots.size > LAST_FRAME_MAX_SHOTS
+    @frames << Frame.new(*@shots.shift(LAST_FRAME_MAX_SHOTS))
   end
 end
