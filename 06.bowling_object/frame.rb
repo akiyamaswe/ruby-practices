@@ -9,12 +9,15 @@ class Frame
 
   def initialize(first_shot, second_shot = nil, third_shot = nil)
     @first_shot = first_shot
-    @second_shot = second_shot || Shot.new(nil)
-    @third_shot = third_shot || Shot.new(nil)
+    @second_shot = second_shot
+    @third_shot = third_shot
   end
 
   def base_frame_score
-    @first_shot.score + @second_shot.score + @third_shot.score
+    score = @first_shot.score
+    score += @second_shot.score if @second_shot
+    score += @third_shot.score if @third_shot
+    score
   end
 
   def strike?
